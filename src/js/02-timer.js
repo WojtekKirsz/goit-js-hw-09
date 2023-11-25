@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from "notiflix";
 
 const datetimePicker = document.getElementById("datetime-picker");
 
@@ -18,7 +19,7 @@ flatpickr(datetimePicker, options);
 function handleDateSelection(selectedDates) {
   const selectedDate = selectedDates[0];
   if (selectedDate < new Date()) {
-    alert("Please choose a date in the future");
+    Notiflix.Notify.warning("Please choose a date in the future");
     return;
   }
   document.querySelector("[data-start]").disabled = false;
