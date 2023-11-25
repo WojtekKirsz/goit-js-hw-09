@@ -7,7 +7,7 @@ const datetimePicker = document.getElementById("datetime-picker");
 const options = {
   enableTime: true,
   time_24hr: true,
-  defaultDate: new Date(),
+  defaultDate: new Date(), // domyślna data
   minuteIncrement: 1,
   onClose(selectedDates) {
     handleDateSelection(selectedDates);
@@ -42,33 +42,43 @@ function startTimer(endTime) {
       return;
     }
 
+    function addLeadingZero(value) {
+      return String(value).padStart(2, "0");
+    }
+
     const { days, hours, minutes, seconds } = convertMs(distance);
 
-    const formattedTime = `${formatTime(days)}:${formatTime(
-      hours
-    )}:${formatTime(minutes)}:${formatTime(seconds)}`;
+    const formattedDays = addLeadingZero(days);
+    const formattedHours = addLeadingZero(hours);
+    const formattedMinutes = addLeadingZero(minutes);
+    const formattedSeconds = addLeadingZero(seconds);
+
+    const formattedTime = `${formattedDays}:${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 
     updateTimerUI(formattedTime);
   }, 1000);
 }
 
 function convertMs(ms) {
+  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
 
+  // Remaining days
   const days = Math.floor(ms / day);
+  // Remaining hours
   const hours = Math.floor((ms % day) / hour);
+  // Remaining minutes
   const minutes = Math.floor(((ms % day) % hour) / minute);
+  // Remaining seconds
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
 }
 
-function formatTime(time) {
-  return time < 10 ? `0${time}` : `${time}`;
-}
+document.querySelector("[data-start]").disabled = true;
 
 function updateTimerUI(timeString) {
   const [daysElem, hoursElem, minutesElem, secondsElem] = [
@@ -85,5 +95,3 @@ function updateTimerUI(timeString) {
   minutesElem.innerText = minutes;
   secondsElem.innerText = seconds;
 }
-
-document.querySelector("[data-start]").disabled = true;
