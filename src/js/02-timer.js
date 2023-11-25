@@ -19,7 +19,7 @@ flatpickr(datetimePicker, options);
 function handleDateSelection(selectedDates) {
   const selectedDate = selectedDates[0];
   if (selectedDate < new Date()) {
-    Notiflix.Notify.warning("Please choose a date in the future");
+    Notiflix.Notify.failure("Please choose a date in the future");
     return;
   }
   document.querySelector("[data-start]").disabled = false;
