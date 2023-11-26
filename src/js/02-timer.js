@@ -5,11 +5,12 @@ import Notiflix from "notiflix";
 const datetimePicker = document.getElementById("datetime-picker");
 
 const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(), // domyślna data
-  minuteIncrement: 1,
+  enableTime: true, // Enables time picker
+  time_24hr: true, // Displays time picker in 24 hour mode without AM/PM selection when enabled.
+  defaultDate: new Date(), // Sets current date
+  minuteIncrement: 1, // Adjusts the step for the minute input (incl. scrolling)
   onClose(selectedDates) {
+    // Function(s) to trigger on every time the calendar is closed
     handleDateSelection(selectedDates);
   },
 };
@@ -17,33 +18,34 @@ const options = {
 flatpickr(datetimePicker, options);
 
 function handleDateSelection(selectedDates) {
-  const selectedDate = selectedDates[0];
+  const selectedDate = selectedDates[0]; // Parametr selectedDates to tablica wybranych dat, dlatego bierzemy z niej pierwszy element.
   if (selectedDate < new Date()) {
-    Notiflix.Notify.failure("Please choose a date in the future");
+    Notiflix.Notify.failure("Please choose a date in the future"); // komunikat wywoływany przy użyciu biblioteki notiflix
     return;
   }
-  document.querySelector("[data-start]").disabled = false;
+  document.querySelector("[data-start]").disabled = false; // uaktywnij przycisk start
   document.querySelector("[data-start]").addEventListener("click", () => {
-    clearInterval(intervalId);
-    startTimer(selectedDate);
+    clearInterval(timerId); // zatrzymanie wykonywania funkcji z parametrem "timerId"
+    startTimer(selectedDate); // wywołanie funkcji z parametrem "selectedDate"
   });
 }
 
-let intervalId;
+let timerId;
 
 function startTimer(endTime) {
-  intervalId = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = endTime - now;
+  timerId = setInterval(() => {
+    // wywołanie funkcji setInterval z potwarzaniem kodu co sekundes
+    const now = new Date().getTime(); // Metoda getTime() zwraca liczbową reprezentację daty (timestamp) - liczbę milisekund, które minęły od północy 1 stycznia 1970 roku.
+    const distance = endTime - now; //  zmienna, która przechowuje różnicę pomiędzy dwiema datami
 
     if (distance < 0) {
-      clearInterval(intervalId);
-      document.querySelector(".timer").innerText = "Countdown Finished!";
+      clearInterval(timerId);
+      document.querySelector(".timer").innerText = "Countdown Finished!"; // zastapięnia div z klasą timer tekstem
       return;
     }
 
     function addLeadingZero(value) {
-      return String(value).padStart(2, "0");
+      return String(value).padStart(2, "0"); // funkcja robiąca stringa z liczby, dodaje zero tworząc max ciąg 2 znaków
     }
 
     const { days, hours, minutes, seconds } = convertMs(distance);
@@ -53,7 +55,7 @@ function startTimer(endTime) {
     const formattedMinutes = addLeadingZero(minutes);
     const formattedSeconds = addLeadingZero(seconds);
 
-    const formattedTime = `${formattedDays}:${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    const formattedTime = `${formattedDays}:${formattedHours}:${formattedMinutes}:${formattedSeconds}`; // przykład wyniku funkcji to "05:12:04:37"
 
     updateTimerUI(formattedTime);
   }, 1000);
@@ -67,7 +69,7 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  const days = Math.floor(ms / day);
+  const days = Math.floor(ms / day); // zaokręglenie w dół do najbliższej całkowitej liczby, zwraca liczbę pełnych dni
   // Remaining hours
   const hours = Math.floor((ms % day) / hour);
   // Remaining minutes
@@ -81,16 +83,14 @@ function convertMs(ms) {
 document.querySelector("[data-start]").disabled = true;
 
 function updateTimerUI(timeString) {
-  const [daysElem, hoursElem, minutesElem, secondsElem] = [
-    document.querySelector("[data-days]"),
-    document.querySelector("[data-hours]"),
-    document.querySelector("[data-minutes]"),
-    document.querySelector("[data-seconds]"),
-  ];
+  const daysElem = document.querySelector("[data-days]");
+  const hoursElem = document.querySelector("[data-hours]");
+  const minutesElem = document.querySelector("[data-minutes]");
+  const secondsElem = document.querySelector("[data-seconds]");
 
-  const [days, hours, minutes, seconds] = timeString.split(":");
+  const [days, hours, minutes, seconds] = timeString.split(":"); // Rozdzielenie ciągu "05:12:04:37" i przypisanie wartości do odpowiednich zmiennych
 
-  daysElem.innerText = days;
+  daysElem.innerText = days; // zastępienie 00 w div days wartości z lini kodu wyżej
   hoursElem.innerText = hours;
   minutesElem.innerText = minutes;
   secondsElem.innerText = seconds;
