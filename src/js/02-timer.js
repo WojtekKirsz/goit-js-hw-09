@@ -40,7 +40,10 @@ function startTimer(endTime) {
 
     if (distance < 0) {
       clearInterval(timerId);
-      document.querySelector(".timer").innerText = "Countdown Finished!"; // zastapięnia div z klasą timer tekstem
+      document.querySelector("[data-days]").innerText = "00"; // kiedy funkcja osiagnie 0 zastap liczniki wartoscią "00"
+      document.querySelector("[data-hours]").innerText = "00";
+      document.querySelector("[data-minutes]").innerText = "00";
+      document.querySelector("[data-seconds]").innerText = "00";
       return;
     }
 
